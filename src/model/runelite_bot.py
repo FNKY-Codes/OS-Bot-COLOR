@@ -236,7 +236,19 @@ class RuneLiteBot(Bot, metaclass=ABCMeta):
             return shapes_sorted[0]
         else:
             return None
-
+    def get_furthest_tag(self, color: clr.Color) -> RuneLiteObject:
+        """
+        Finds the nearest outlined object of a particular color within the game view and returns it as a RuneLiteObject.
+        Args:
+            color: The clr.Color to search for.
+        Returns:
+            The nearest outline to the character as a RuneLiteObject, or None if none found.
+        """
+        if shapes := self.get_all_tagged_in_rect(self.win.game_view, color):
+            shapes_sorted = sorted(shapes, key=RuneLiteObject.distance_from_rect_center)
+            return shapes_sorted[len(shapes_sorted)-1]
+        else:
+            return None
     # --- Client Settings ---
     @deprecated(reason="This method is no longer needed for RuneLite games that can launch with arguments through the OSBC client.")
     def logout_runelite(self):

@@ -47,7 +47,6 @@ class OSRSMyBot(OSRSBot):
         self.log_msg("Options set successfully.")
         self.options_set = True
 
-    def rotate_camera
 
     def main_loop(self):
         """
@@ -75,25 +74,22 @@ class OSRSMyBot(OSRSBot):
             if rd.random_chance(probability=0.05) and self.take_breaks:
                 self.take_break(max_seconds=15)
             
-            # If we have 5 or more logs, drop them
-            log_slots = api_m.get_inv_item_indices(ids.logs)
-            if len(log_slots) >= 3:
-                self.drop(log_slots)
-                time.sleep(1)
-
-            # If we are idle, click on a tree
+            
             if api_m.get_is_player_idle():
-                if tree := self.get_nearest_tag(clr.PINK):
-                    self.mouse.move_to(tree.random_point())
-                    if not self.mouseover_text(contains="Chop"):
+                if chicken := self.get_furthest_tag(clr.CYAN):
+                    self.mouse.move_to(chicken.random_point())
+                    if not self.mouseover_text(contains="Attack"):
+                        self.move_camera(rd.fancy_normal_sample(-90,90),0)
                         continue
                     self.mouse.click()
-            time.sleep(1)
-
-            # Move mouse to tinderbox between each iteration
-            if tinderbox := imsearch.search_img_in_rect(tinderbox_img, self.win.control_panel):
-                self.mouse.move_to(tinderbox.random_point())
-
+            
+            if chicken := self.get_furthest_tag(clr.CYAN):
+                    self.mouse.move_to(chicken.random_point())
+                    if not self.mouseover_text(contains="Attack"):
+                        self.move_camera(rd.fancy_normal_sample(-90,90),0)
+                        continue
+            
+                
             self.update_progress((time.time() - start_time) / end_time)
 
         self.update_progress(1)
