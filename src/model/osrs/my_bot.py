@@ -79,17 +79,18 @@ class OSRSMyBot(OSRSBot):
                 if chicken := self.get_furthest_tag(clr.CYAN):
                     self.mouse.move_to(chicken.random_point())
                     if not self.mouseover_text(contains="Attack"):
+                        self.log_msg("Moving Camera")
                         self.move_camera(rd.fancy_normal_sample(-90,90),0)
                         continue
+                    self.log_msg("Target Found")
                     self.mouse.click()
             
             if chicken := self.get_furthest_tag(clr.CYAN):
                     self.mouse.move_to(chicken.random_point())
                     if not self.mouseover_text(contains="Attack"):
-                        self.move_camera(rd.fancy_normal_sample(-90,90),0)
                         continue
             
-                
+            
             self.update_progress((time.time() - start_time) / end_time)
 
         self.update_progress(1)
