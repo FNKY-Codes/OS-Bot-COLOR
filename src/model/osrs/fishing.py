@@ -4,8 +4,11 @@ import utilities.api.item_ids as ids
 import utilities.color as clr
 import utilities.random_util as rd
 from model.osrs.osrs_bot import OSRSBot
+from model.runelite_bot import BotStatus
 from utilities.api.morg_http_client import MorgHTTPSocket
+from utilities.api.status_socket import StatusSocket
 import utilities.imagesearch as imsearch
+from utilities.geometry import RuneLiteObject
 
 class OSRSfishing(OSRSBot):
     def __init__(self):
@@ -46,15 +49,15 @@ class OSRSfishing(OSRSBot):
         self.log_msg(f"Bot will{' ' if self.take_breaks else ' not '}take breaks.")
         self.log_msg("Options set successfully.")
         self.options_set = True
-    def __drop_shrimp(self, api_s: StatusSocket):
+    def __drop_shrimp(self, api_m: StatusSocket):
         """
         Private function for dropping logs. This code is used in multiple places, so it's been abstracted.
         Since we made the `api` and `logs` variables assigned to `self`, we can access them from this function.
         """
-        slots = api_s.get_inv_item_indices(ids.logs)
+        slots = api_m.get_inv_item_indices([ids.RAW_SHRIMPS, ids.RAW_ANCHOVIES])
         self.drop(slots)
         self.logs += len(slots)
-        self.log_msg(f"Logs cut: ~{self.logs}")
+        self.log_msg(f"Fish Caught: ~{self.logs}")
         time.sleep(1)
 
     def main_loop(self):
@@ -71,6 +74,8 @@ class OSRSfishing(OSRSBot):
         """
         # Setup APIs
         api_m = MorgHTTPSocket()
+        
+        self.logs = 0
 
         shrimp_img = imsearch.BOT_IMAGES.joinpath("items", "tinderbox.png")
 
@@ -83,6 +88,8 @@ class OSRSfishing(OSRSBot):
             if rd.random_chance(probability=0.05) and self.take_breaks:
                 self.take_break(max_seconds=15)
             
+            if api_m.get_is_inv_full():
+                self.__drop_shrimp(api_m)
             
             if api_m.get_is_player_idle():
                 if fishingSpot := self.get_nearest_tag(clr.CYAN):
@@ -99,5 +106,6 @@ class OSRSfishing(OSRSBot):
             self.update_progress((time.time() - start_time) / end_time)
 
         self.update_progress(1)
+        self.logout_runelite()
         self.log_msg("Finished.")
         self.stop()
