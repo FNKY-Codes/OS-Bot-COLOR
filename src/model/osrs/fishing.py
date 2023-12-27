@@ -54,7 +54,7 @@ class OSRSfishing(OSRSBot):
         Private function for dropping logs. This code is used in multiple places, so it's been abstracted.
         Since we made the `api` and `logs` variables assigned to `self`, we can access them from this function.
         """
-        slots = api_m.get_inv_item_indices([ids.RAW_SHRIMPS, ids.RAW_ANCHOVIES])
+        slots = api_m.get_inv_item_indices([ids.RAW_SHRIMPS, ids.RAW_ANCHOVIES, ids.RAW_SALMON, ids.RAW_TROUT])
         self.drop(slots)
         self.logs += len(slots)
         self.log_msg(f"Fish Caught: ~{self.logs}")
@@ -92,14 +92,20 @@ class OSRSfishing(OSRSBot):
                 self.__drop_shrimp(api_m)
             
             if api_m.get_is_player_idle():
-                if fishingSpot := self.get_nearest_tag(clr.CYAN):
-                    self.mouse.move_to(fishingSpot.random_point())
-                    if not self.mouseover_text(contains="Net"):
-                        self.log_msg("Moving Camera")
-                        self.move_camera(rd.fancy_normal_sample(-90,90),0)
-                        continue
-                    self.log_msg("Target Found")
-                    self.mouse.click()
+                if api_m.get_inv_item_stack_amount(ids.FEATHER) > 0:
+                    if fishingSpot := self.get_nearest_tag(clr.CYAN):
+                        self.mouse.move_to(fishingSpot.random_point())
+                        if not self.mouseover_text(contains="Lure"):
+                            self.log_msg("Moving Camera")
+                            self.move_camera(rd.fancy_normal_sample(-90,90),0)
+                            continue
+                        self.log_msg("Target Found")
+                        self.mouse.click()
+                else:
+                    self.logout_runelite()
+                    self.log_msg("Finished, ran out of feathers.")
+                    self.stop()
+
             
             
             

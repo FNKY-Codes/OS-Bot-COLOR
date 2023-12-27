@@ -261,6 +261,7 @@ class Bot(ABC):
                 offsetBoundaryX=40,
                 tween=pytweening.easeInOutQuad,
             )
+            
             self.mouse.click()
         pag.keyUp("shift")
 
