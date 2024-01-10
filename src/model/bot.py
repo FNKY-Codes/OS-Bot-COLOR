@@ -240,6 +240,13 @@ class Bot(ABC):
             skip_rows: The number of rows to skip before dropping.
             skip_slots: The indices of slots to avoid dropping.
         """
+
+        #Confirm Inventory is open
+        if():
+            self.mouse.move_to(self.win.cp_tabs[3].random_point())
+            self.mouse.click()
+        time.sleep(0.5)
+        #Logging
         self.log_msg("Dropping inventory...")
         # Determine slots to skip
         if skip_slots is None:

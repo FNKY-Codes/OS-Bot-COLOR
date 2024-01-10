@@ -93,6 +93,7 @@ class OSRSfishing(OSRSBot):
             
             if api_m.get_is_player_idle():
                 if api_m.get_inv_item_stack_amount(ids.FEATHER) > 0:
+                    self.log_msg("Idle, feathers remaining: "+ str(api_m.get_inv_item_stack_amount(ids.FEATHER)))
                     if fishingSpot := self.get_nearest_tag(clr.CYAN):
                         self.mouse.move_to(fishingSpot.random_point())
                         if not self.mouseover_text(contains="Lure"):
@@ -101,6 +102,10 @@ class OSRSfishing(OSRSBot):
                             continue
                         self.log_msg("Target Found")
                         self.mouse.click()
+                    else:
+                            self.log_msg("Moving Camera")
+                            self.move_camera(rd.fancy_normal_sample(-90,90),0)
+                            continue
                 else:
                     self.logout_runelite()
                     self.log_msg("Finished, ran out of feathers.")
